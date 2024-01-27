@@ -43,7 +43,7 @@ class TransactionRepository implements TransactionRepositoryInterface
             DB::raw('COALESCE(SUM(CASE WHEN status_id = '.TRX_STATUS_OUTSTANDING_ID.' THEN remaining_amount ELSE 0 END), 0) as outstanding'),
             DB::raw('SUM(total_amount) as total'),
         )
-        ->whereBetween('due_on', [$data['start_date'], $data['end_date']])
+        ->whereDate('due_on', '>=', $data['start_date'])->whereDate('due_on', '<=', $data['end_date'])
         ->groupBy(DB::raw('YEAR(due_on), MONTH(due_on)'))
         ->orderBy(DB::raw('YEAR(due_on), MONTH(due_on)'))
         ->get();
